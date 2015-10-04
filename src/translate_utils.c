@@ -59,7 +59,19 @@ int translate_num(long int* output, const char* str, long int lower_bound,
         return -1;
     }
     /* YOUR CODE HERE */
-    return -1;
+    int base = 10;
+    const *char hex = "0x";
+
+    if (strstr(str, hex))
+      base = 16;
+    long int ret;
+    ret = strtol(str, NULL, base);
+
+    if (ret < lower_bound || ret > upper_bound)
+      return -1;
+
+    *output = ret;
+    return 0;
 }
 
 /* Translates the register name to the corresponding register number. Please
@@ -73,6 +85,25 @@ int translate_reg(const char* str) {
     else if (strcmp(str, "$at") == 0)   return 1;
     else if (strcmp(str, "$v0") == 0)   return 2;
     else if (strcmp(str, "$a0") == 0)   return 4;
+    // jk: my code start here.
+    else if (strcmp(str, "$a1") == 0)   return 5;
+    else if (strcmp(str, "$a2") == 0)   return 6;
+    else if (strcmp(str, "$a3") == 0)   return 7;
+
+    else if (strcmp(str, "$t0") == 0)   return 8;
+    else if (strcmp(str, "$t1") == 0)   return 9;
+    else if (strcmp(str, "$t2") == 0)   return 10;
+    else if (strcmp(str, "$t3") == 0)   return 11;
+
+    else if (strcmp(str, "$s0") == 0)   return 16;
+    else if (strcmp(str, "$s1") == 0)   return 17;
+    else if (strcmp(str, "$s2") == 0)   return 18;
+    else if (strcmp(str, "$s3") == 0)   return 19;
+
+    else if (strcmp(str, "$sp") == 0)   return 29;
+    else if (strcmp(str, "$ra") == 0)   return 31;
+
+
     /* YOUR CODE HERE */
     else                                return -1;
 }
