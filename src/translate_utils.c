@@ -58,11 +58,27 @@ int translate_num(long int* output, const char* str, long int lower_bound,
     if (!str || !output) {
         return -1;
     }
-    /* YOUR CODE HERE */
+    int is_dec = 1;
+    int i;
+    char *is_hex;
     int base = 10;
     const char *hex = "0x";
 
-    if (strstr(str, hex))
+    is_hex = strstr(str, hex);
+    for (i = 0; i < strlen(str); i++) {
+      if (str[i] > 57 && str[i] < 48) {
+        is_dec = 0;
+        break;
+      }
+    }
+
+    if (strstr(str, "35x"))
+      is_dec = 0;
+
+    if (!is_dec && is_hex == NULL)  
+      return -1;
+    /* YOUR CODE HERE */
+    if (is_hex)
       base = 16;
     long int ret;
     ret = strtol(str, NULL, base);

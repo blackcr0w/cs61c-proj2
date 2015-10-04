@@ -45,6 +45,9 @@ void write_symbol(FILE* output, uint32_t addr, const char* name) {
  */
 SymbolTable* create_table(int mode) {
     /* YOUR CODE HERE */
+    SymbolTable *new_table = (SymbolTable *) malloc(sizeof(SymbolTable));
+    new_table->tbl = (Symbol *)malloc(sizeof(Symbol));
+    new_table->tbl->name = (char *)malloc(sizeof(char));
     return NULL;
 }
 
