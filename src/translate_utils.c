@@ -60,7 +60,7 @@ int translate_num(long int* output, const char* str, long int lower_bound,
     }
     /* YOUR CODE HERE */
     int base = 10;
-    const *char hex = "0x";
+    const char *hex = "0x";
 
     if (strstr(str, hex))
       base = 16;
