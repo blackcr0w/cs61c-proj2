@@ -45,14 +45,28 @@ void write_symbol(FILE* output, uint32_t addr, const char* name) {
  */
 SymbolTable* create_table(int mode) {
     /* YOUR CODE HERE */
-    SymbolTable *new_table = (SymbolTable *) malloc(sizeof(SymbolTable));
-    new_table->tbl = (Symbol *)malloc(sizeof(Symbol));
-    new_table->tbl->name = (char *)malloc(sizeof(char));
-    return NULL;
+    SymbolTable *new_table = (SymbolTable *)malloc( sizeof(SymbolTable));
+    new_table->tbl = (Symbol *)malloc(INITIAL_SIZE * sizeof(Symbol));
+    // printf("%s\n", "there1");
+    // (new_table->tbl + sizeof(Symbol))->addr = 1;
+    // printf("%s\n", "there2");
+    // printf("%d\n", (int)(new_table->tbl + sizeof(Symbol))->addr);
+    // strcpy((new_table->tbl + 3 * sizeof(Symbol))->name, "yes");
+    //printf("%s\n", (new_table->tbl + 3 * sizeof(Symbol))->name);
+    if (new_table == NULL || new_table->tbl == NULL)
+      allocation_failed();
+
+    new_table->len = 0;
+    new_table->cap = INITIAL_SIZE;  // jk: do not know the cap
+    new_table->mode = mode;
+    return new_table;
 }
 
 /* Frees the given SymbolTable and all associated memory. */
 void free_table(SymbolTable* table) {
+  free(table->tbl);
+  free(table);
+  return;
     /* YOUR CODE HERE */
 }
 
@@ -83,14 +97,47 @@ static char* create_copy_of_str(const char* str) {
  */
 int add_to_table(SymbolTable* table, const char* name, uint32_t addr) {
     /* YOUR CODE HERE */
-    return -1;
+    if ((addr & 0x3)) {
+      addr_alignment_incorrect();
+      return -1;
+    }
+    if (table->mode == SYMTBL_UNIQUE_NAME && table->len) {
+      int i;
+      for (i = 0; i < table->len; i++) {
+        if (strstr((table->tbl[i]).name, name) != NULL) {
+          name_already_exists(name);
+          return -1;
+        }
+      }
+    }
+
+    if (table->len >= table->cap){
+      table->cap = table->cap * SCALING_FACTOR;
+      table->tbl = (Symbol *)realloc(table->tbl, table->cap * sizeof(Symbol)); 
+      // jk: after realloc, the content of memory does not change
+      if (!table->tbl) {
+        allocation_failed();
+        return -1;
+      } 
+    }
+    table->tbl[table->len].addr = addr;
+    table->tbl[table->len].name = (char *)malloc(sizeof(strlen(name + 1)));
+    strcpy(table->tbl[table->len].name, name);
+    
+    table->len++;
+    return 0;
 }
 
 /* Returns the address (byte offset) of the given symbol. If a symbol with name
    NAME is not present in TABLE, return -1.
  */
 int64_t get_addr_for_symbol(SymbolTable* table, const char* name) {
-    /* YOUR CODE HERE */ 
+    /* YOUR CODE HERE */
+    int i;
+    for (i = 0; i < table->len; i++) {
+      if (!strcmp(table->tbl[i].name, name))
+        return table->tbl[i].addr;
+    }
     return -1;
 }
 
