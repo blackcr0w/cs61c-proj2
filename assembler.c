@@ -151,13 +151,13 @@ int pass_one(FILE* input, FILE* output, SymbolTable* symtbl) {
         skip_comment(buf);
 
         // Scan for the instruction name
-    	char* token = strtok(buf, IGNORE_CHARS);
+        char* token = strtok(buf, IGNORE_CHARS);
 
         // Scan for arguments
         char* args[MAX_ARGS];
         int num_args = 0;
 
-    	// Checks to see if there were any errors when writing instructions
+        // Checks to see if there were any errors when writing instructions
         unsigned int lines_written = write_pass_one(output, token, args, num_args);
         if (lines_written == 0) {
             raise_inst_error(input_line, token, args, num_args);
@@ -179,30 +179,44 @@ int pass_one(FILE* input, FILE* output, SymbolTable* symtbl) {
    the document, and at the end, return -1. Return 0 if no errors were encountered. */
 int pass_two(FILE *input, FILE* output, SymbolTable* symtbl, SymbolTable* reltbl) {
     /* YOUR CODE HERE */
-
+    char* name;
     /* Since we pass this buffer to strtok(), the characters in this buffer will
        GET CLOBBERED. */
     char buf[BUF_SIZE];
     // Store input line number / byte offset below. When should each be incremented?
-
+    uint32_t input_line = 0, byte_offset = 0;
+    int countErr= 0;
     // First, read the next line into a buffer.
-
+    while (fgets(buf, BUF_SIZE, input) != NULL) {
     // Next, use strtok() to scan for next character. If there's nothing,
     // go to the next line.
+        input_line += 1;
+        name = strtok(buf, IGNORE_CHARS);
+        if (name == NULL || strlen(name) == 0) {
+            continue;
+        }
 
     // Parse for instruction arguments. You should use strtok() to tokenize
     // the rest of the line. Extra arguments should be filtered out in pass_one(),
     // so you don't need to worry about that here.
     char* args[MAX_ARGS];
     int num_args = 0;
+    parse_args(input_line, args, &num_args);
 
     // Use translate_inst() to translate the instruction and write to output file.
     // If an error occurs, the instruction will not be written and you should call
     // raise_inst_error(). 
+    int translateFile = translate_inst(output, name, args, num_args, byte_offset, symtbl, reltbl);
+    if (translateFile != 0){
+            raise_inst_error(input_line, name, args, num_args);
+            countErr = -1;
+        }else {
+            byte_offset += 4;
+    }
 
+}
     // Repeat until no more characters are left, and the return the correct return val
-
-    return -1;
+    return countErr;
 }
 
 /*******************************

@@ -62,6 +62,8 @@ SymbolTable* create_table(int mode) {
     return new_table;
 }
 
+// jk: need to think about other helper functions
+
 /* Frees the given SymbolTable and all associated memory. */
 void free_table(SymbolTable* table) {
   free(table->tbl);
@@ -144,6 +146,11 @@ int64_t get_addr_for_symbol(SymbolTable* table, const char* name) {
 /* Writes the SymbolTable TABLE to OUTPUT. You should use write_symbol() to
    perform the write. Do not print any additional whitespace or characters.
  */
+   // jk: need test.
 void write_table(SymbolTable* table, FILE* output) {
     /* YOUR CODE HERE */
+  int temp;
+  for (temp = 0; temp < table->len; temp++) {
+    write_symbol(output, table->tbl[temp].addr, table->tbl[temp].name);
+  }
 }
